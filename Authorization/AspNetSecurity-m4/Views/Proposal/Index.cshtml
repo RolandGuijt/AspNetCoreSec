@@ -1,0 +1,45 @@
+﻿@using System.Threading.Tasks
+@using AspNetSecurity_m4_Shared.Models
+@using Microsoft.AspNetCore.Authorization
+
+@model IEnumerable<ProposalModel>
+
+@inject IAuthorizationService AuthorizationService
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-2">
+        <table class="table">
+            <tr>
+                <th>Title</th>
+                <th>Speaker</th>
+                <th>Approved</th>
+                <th>Actions</th>
+            </tr>
+            @foreach (var proposal in Model)
+            {
+                <tr>
+                    <td>@proposal.Title</td>
+                    <td>@proposal.Speaker</td>
+                    <td>
+                        @if (proposal.Approved)
+                        {
+                            <div class="glyphicon glyphicon-check"></div>
+                        }
+                    </td>
+                    <td>
+                        @if (!proposal.Approved)
+                        {
+                            <a asp-action="Approve" asp-route-proposalId="@proposal.Id">Approve</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+        
+        @if ((await AuthorizationService.AuthorizeAsync(User, "SpeakerAccessPolicy")).Succeeded)
+        {
+            <a asp-action="AddProposal" asp-route-conferenceId="@ViewBag.ConferenceId">Add</a>
+        }
+
+    </div>
+</div>

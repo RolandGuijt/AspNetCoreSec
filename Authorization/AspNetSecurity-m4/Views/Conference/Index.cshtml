@@ -1,0 +1,37 @@
+﻿@using System.Threading.Tasks
+@using AspNetSecurity_m4.Api
+@using AspNetSecurity_m4_Shared.Models
+@model IEnumerable<ConferenceModel>
+@inject AttendeeApiService AttendeeService
+<div class="row">
+    <div class="col-md-10 col-md-offset-2">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Start of event</th>
+                <th>Attendees</th>
+                <th>Actions</th>
+            </tr>
+            @foreach (var conference in Model)
+            {
+                <tr>
+                    <td>@conference.Name</td>
+                    <td>@conference.Location</td>
+                    <td>@conference.Start.ToString("ddd d MMM")</td>
+                    <td>@await AttendeeService.GetAttendeesTotal(conference.Id)</td>
+                    <td>
+                        <a asp-controller="Proposal" asp-action="Index" asp-route-conferenceId="@conference.Id">Proposals</a>
+                    </td>
+                </tr>
+            }
+        </table>
+        <a asp-action="Add">Add</a>
+        @foreach (var claim in User.Claims) {
+            @claim.Type<br/>
+            @claim.Value<br/>
+
+        }
+    </div>
+</div>
+
